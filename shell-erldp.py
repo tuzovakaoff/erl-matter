@@ -101,13 +101,16 @@ def recv_reply(f):
   (length,) = unpack('!I', data)
 
   data = f.recv(length)
-  assert(len(data) == length)
+#  assert(len(data) == length)
 
   (header, footer) = data.split(unhexlify('00000003000000000083'))
-  (header, footer) = footer.split(unhexlify('6b'))
-
-  (length,) = unpack('!H', footer[:2])
-  assert(len(footer[2:]) == length)
+  if len (footer.split(unhexlify('6b'), 1)) > 1:
+    (header, footer) = footer.split(unhexlify('6b'), 1)
+    (length,) = unpack('!H', footer[:2])
+    assert(len(footer[2:]) == length)
+  else:
+    header = footer.split(unhexlify('6b'), 1)
+    footer =  ""
 
   return footer[2:]
 
